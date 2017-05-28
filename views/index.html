@@ -15,25 +15,16 @@
     <!-- component templates -->
     <script type="text/x-template" id="tile-template">
       <li
-        class="hex"
-        v-bind:class=""
+        v-bind:class="classes"
       >
         <div class="hex-in">
           <a href="#" class="hex-link">
-            <img src="https://cdn.glitch.com/7f1f1519-54c4-4968-b334-78d8fe707213%2Fplain-green-tile.svg?1495997250005">
+            <img 
+              v-bind:src="imageUrl"
+            >
           </a>
         </div>
       </li>
-      <section class="mood card">
-        <header class="mood__header card-divider">
-          <h3><i v-bind:class="'e1a-' + icon"></i>{{ title }}</h3>
-        </header>
-        <ul class="mood__options card-section menu vertical">
-          <li v-for="option in options">
-            <a v-bind:href="option.url">{{ option.title }}</a>
-          </li>
-        </ul>
-      </section>
     </script>
     <!-- END of component templates -->
     
@@ -55,6 +46,11 @@
 
     <main id="#main">
       <ul class="hex-grid">
+          <li
+              class="hex"
+              v-for="option in options"
+          >
+          </li>
           <li class="hex">
             <div class="hex-in">
               <a href="#" class="hex-link">

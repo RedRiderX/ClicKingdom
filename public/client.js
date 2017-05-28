@@ -19,11 +19,11 @@ var app = {
   ]
 }
 
-Vue.component('playlist', {
-  template: '#playlist-template',
+Vue.component('tile', {
+  template: '#tile-template',
   
   props: {
-    posts: Array,
+    imageUrl: String,
   },
   
   computed: {
@@ -95,16 +95,21 @@ var vm = new Vue({
     // basically changing multi-diemensional array to single diemension so my html can deal with it
     tilesRendered: function() {
       let tilesReadyforRender = []
-      let rowId = 0
-      let columnId = 0
+      let rowNum = 0
+      let columnNum = 0
       
       for (let row of app.startingTiles) {
-        columnId = 0
+        columnNum = 0
         for (let tile of row) {
-          
-          columnId++
+          let newTile = {
+            row: rowNum,
+            column: columnNum,
+            type: tile.type 
+          }
+          tilesReadyforRender.push(newTile)
+          columnNum++
         }
-        rowId++
+        rowNum++
       }
       return tilesReadyforRender
     }
