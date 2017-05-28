@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Welcome to Glitch!</title>
-    <meta name="description" content="A cool thing made with Glitch">
+    <title>ClicKingdom</title>
+    <meta name="description" content="An empire-building clicker">
     <link id="favicon" rel="icon" href="https://glitch.com/edit/favicon-app.ico" type="image/x-icon">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -12,6 +12,31 @@
     <link rel="stylesheet" href="/style.css">
   </head>
   <body>
+    <!-- component templates -->
+    <script type="text/x-template" id="tile-template">
+      <li
+        class="hex"
+        v-bind:class=""
+      >
+        <div class="hex-in">
+          <a href="#" class="hex-link">
+            <img src="https://cdn.glitch.com/7f1f1519-54c4-4968-b334-78d8fe707213%2Fplain-green-tile.svg?1495997250005">
+          </a>
+        </div>
+      </li>
+      <section class="mood card">
+        <header class="mood__header card-divider">
+          <h3><i v-bind:class="'e1a-' + icon"></i>{{ title }}</h3>
+        </header>
+        <ul class="mood__options card-section menu vertical">
+          <li v-for="option in options">
+            <a v-bind:href="option.url">{{ option.title }}</a>
+          </li>
+        </ul>
+      </section>
+    </script>
+    <!-- END of component templates -->
+    
     <div class="support-warning">
       <h1>
         Uh oh.
@@ -28,7 +53,7 @@
       </h1>
     </header>
 
-    <main>
+    <main id="#main">
       <ul class="hex-grid">
           <li class="hex">
             <div class="hex-in">
@@ -93,16 +118,39 @@
               </a>
             </div>
           </li>
+          <li class="hex">
+            <div class="hex-in">
+              <a href="#" class="hex-link">
+                <img src="https://cdn.glitch.com/7f1f1519-54c4-4968-b334-78d8fe707213%2Fplain-green-tile.svg?1495997250005">
+              </a>
+            </div>
+          </li>
+          <li class="hex">
+            <div class="hex-in">
+              <a href="#" class="hex-link">
+                <img src="https://cdn.glitch.com/7f1f1519-54c4-4968-b334-78d8fe707213%2Fplain-green-tile.svg?1495997250005">
+              </a>
+            </div>
+          </li>
+          <li class="hex">
+            <div class="hex-in">
+              <a href="#" class="hex-link">
+                <img src="https://cdn.glitch.com/7f1f1519-54c4-4968-b334-78d8fe707213%2Fplain-green-tile.svg?1495997250005">
+              </a>
+            </div>
+          </li>
+          <li class="hex">
+            <div class="hex-in">
+              <a href="#" class="hex-link">
+                <img src="https://cdn.glitch.com/7f1f1519-54c4-4968-b334-78d8fe707213%2Fplain-green-tile.svg?1495997250005">
+              </a>
+            </div>
+          </li>
       </ul>
-      <img src="https://cdn.glitch.com/7f1f1519-54c4-4968-b334-78d8fe707213%2Ffarm-green-tile.svg?1495997249777">
-      <img src="https://cdn.glitch.com/7f1f1519-54c4-4968-b334-78d8fe707213%2Fruin-green-tile.svg?1495997249828">
-      <img src="https://cdn.glitch.com/7f1f1519-54c4-4968-b334-78d8fe707213%2Fmedium-castle-green-tile.svg?1495997249834">
-      <img src="https://cdn.glitch.com/7f1f1519-54c4-4968-b334-78d8fe707213%2Fplain-green-tile.svg?1495997250005">
-      <img src="https://cdn.glitch.com/7f1f1519-54c4-4968-b334-78d8fe707213%2Ftown-green-tile.svg?1495997250053">
     </main>
 
     <footer>
-      <a href="https://glitch.com">
+      <a href="https://glitch.com/edit/#!/clickingdom">
         Remix this in Glitch
       </a>
     </footer>
@@ -111,6 +159,7 @@
     <script src="https://code.jquery.com/jquery-2.2.1.min.js"
             integrity="sha256-gvQgAFzTH6trSrAWoH1iPo9Xc96QxSZ3feW6kem+O00="
             crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/vue@2.3.3"></script>
     <script src="/client.js"></script>
 
   </body>

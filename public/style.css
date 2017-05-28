@@ -14,7 +14,6 @@ body {
 }
 
 footer {
-  margin-top: 50px;
   padding: 25px;
   border-top: 1px solid lightgrey;
 }
@@ -34,20 +33,32 @@ footer {
   }
 }
 
+.main-title {
+  font-size: 2.4rem;
+  font-family: 'Metamorphous', serif;
+  padding: .5rem;
+  text-align: center;
+  margin: 0;
+  background: #ccc
+}
+
+main {
+  background-color: #eee;
+  width: 100%;
+  height: calc(100vh - 3.875rem);
+}
+
 .hex-grid {
   display: flex;
   flex-wrap: wrap;
-  width: 80%;
-  margin: 2% auto;
+  margin: 0 auto;
   overflow: hidden;
-  font-size: 15px;
   list-style-type: none;
 }
 
 .hex {
   position: relative;
   visibility:hidden;
-  outline:1px solid transparent; /* fix for jagged edges in FF on hover transition */
 }
 .hex::after{
   content:'';
@@ -56,8 +67,8 @@ footer {
 }
 .hex-in{
   position: absolute;
-  width:96%;
-  padding-bottom: 110.851%; /* =  width / sin(60) */
+  width:100%;
+  padding-bottom: 113%;
 /*   margin:0 2%; */
   overflow: hidden;
   visibility: hidden;
@@ -91,15 +102,12 @@ footer {
   transform: rotate3d(0,0,0,0deg);
 }
 
-
-
 /*** HEXAGON SIZING AND EVEN ROW INDENTATION *****************************************************************/
 .hex {
-  width: 33.333%;
+  width: calc(100% / var(--grid-col-num));
 }
-.hex:nth-child(1),
-.hex:nth-child(5n+6) { /* first hexagon of even rows */
-  margin-left:16.666%;  /* = width of .hex / 2  to indent even rows */
+.hex:nth-child(9n+6) { /* first hexagon of even rows */
+  margin-left:calc((100% / var(--grid-col-num)) / 2);  /* = width of .hex / 2  to indent even rows */
 }
 
 .hex {
@@ -114,13 +122,4 @@ footer {
 }
 .hex_start {
   opacity: 1;
-}
-
-.main-title {
-  font-size: 2.4rem;
-  font-family: 'Metamorphous', serif;
-  padding: .5rem;
-  text-align: center;
-  margin: 0;
-  background: #eee
 }

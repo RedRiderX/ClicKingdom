@@ -1,26 +1,115 @@
-// client-side js
-// run by the browser each time your view template is loaded
+'use strict';
+/* jshint eqnull:true */
+/* globals Vue */
 
-// by default, you've got jQuery,
-// add other scripts at the bottom of index.html
+var app = {
+  tileUrls: {
+    farm: 'https://cdn.glitch.com/7f1f1519-54c4-4968-b334-78d8fe707213%2Ffarm-green-tile.svg?1495997249777',
+    ruin: 'https://cdn.glitch.com/7f1f1519-54c4-4968-b334-78d8fe707213%2Fruin-green-tile.svg?1495997249828',
+    castle: 'https://cdn.glitch.com/7f1f1519-54c4-4968-b334-78d8fe707213%2Fmedium-castle-green-tile.svg?1495997249834',
+    plain: 'https://cdn.glitch.com/7f1f1519-54c4-4968-b334-78d8fe707213%2Fplain-green-tile.svg?1495997250005',
+    town: 'https://cdn.glitch.com/7f1f1519-54c4-4968-b334-78d8fe707213%2Ftown-green-tile.svg?1495997250053',
+  },
+  startingTiles: [
+    [{type: 'plain'}, {type: 'plain'}, {type: 'plain'}, {type: 'plain'}, {type: 'plain'}],
+    [{type: 'plain'}, {type: 'plain'}, {type: 'plain'}, {type: 'plain'}],
+    [{type: 'plain'}, {type: 'plain'}, {type: 'ruin'}, {type: 'plain'}, {type: 'plain'}],
+    [{type: 'plain'}, {type: 'plain'}, {type: 'plain'}, {type: 'plain'}],
+    [{type: 'plain'}, {type: 'plain'}, {type: 'plain'}, {type: 'plain'}, {type: 'plain'}],
+  ]
+}
 
-$(function() {
-  console.log('hello world :o');
+Vue.component('playlist', {
+  template: '#playlist-template',
   
-  $.get('/dreams', function(dreams) {
-    dreams.forEach(function(dream) {
-      $('<li></li>').text(dream).appendTo('ul#dreams');
-    });
-  });
-
-  $('form').submit(function(event) {
-    event.preventDefault();
-    var dream = $('input').val();
-    $.post('/dreams?' + $.param({dream: dream}), function() {
-      $('<li></li>').text(dream).appendTo('ul#dreams');
-      $('input').val('');
-      $('input').focus();
-    });
-  });
-
+  props: {
+    posts: Array,
+  },
+  
+  computed: {
+    // TODO: make smart
+    loading: function() {
+      return false;
+    }
+  },
+  
+  methods: {
+    emitLoadPost: function(index) {
+      this.$emit('load-post', this.posts[index]);
+    }
+  },
+  
+  components: {
+    'upcoming-post': {
+      template: '#upcoming-post-template',
+      
+      props: {
+        active: Boolean,
+        nsfw: Boolean,
+        spoiler: Boolean,
+        title: String,
+        thumbnail: String
+      },
+      
+      filters: {
+        isThumbnail: function(url) {
+          // Cheat by just checking common cases I guess?
+          switch (url) {
+            case 'nsfw':
+              return app.config.nsfwThumbnailUrl;
+            case 'spoiler':
+              return app.config.spoilerThumbnailUrl;
+            
+            default:
+              return url;
+          }
+        },
+        // because the reddit api is derped
+        makeSSL: function(url) {
+          return url.replace('http://', 'https://');
+        }
+      },
+      
+      watch: {
+        active: function(isActive) {
+          if (isActive) {
+            var upcomingPosts = document.querySelectorAll('.upcoming-posts')[0],
+                buffer = 100;
+                
+            upcomingPosts.scrollTop = this.$el.offsetTop - buffer;
+          }
+        }
+      }
+    }
+  }
 });
+
+var vm = new Vue({
+  el: 'main',
+  
+  data: {
+    tiles: app.startingTiles
+  },
+  
+  computed: {
+    // basically changing multi-diemensional array to single diemension so my html can deal with it
+    tilesRendered: function() {
+      let tilesReadyforRender = []
+      let rowId = 0
+      let columnId = 0
+      
+      for (let row of app.startingTiles) {
+        columnId = 0
+        for (let tile of row) {
+          
+          columnId++
+        }
+        rowId++
+      }
+      return tilesReadyforRender
+    }
+  },
+
+  methods: {
+  }
+})
