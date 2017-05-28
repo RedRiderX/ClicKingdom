@@ -13,7 +13,7 @@ var app = {
   startingTiles: [
     [{type: 'plain'}, {type: 'plain'}, {type: 'plain'}, {type: 'plain'}, {type: 'plain'}],
     [{type: 'plain'}, {type: 'plain'}, {type: 'plain'}, {type: 'plain'}],
-    [{type: 'plain'}, {type: 'plain'}, {type: 'ruin'}, {type: 'plain'}, {type: 'plain'}],
+    [{type: 'plain'}, {type: 'plain'}, {type: 'ruin', status: 'startTile'}, {type: 'plain'}, {type: 'plain'}],
     [{type: 'plain'}, {type: 'plain'}, {type: 'plain'}, {type: 'plain'}],
     [{type: 'plain'}, {type: 'plain'}, {type: 'plain'}, {type: 'plain'}, {type: 'plain'}],
   ]
@@ -23,66 +23,28 @@ Vue.component('tile', {
   template: '#tile-template',
   
   props: {
-    imageUrl: String,
+    type: String,
+    row: Number,
+    column: Number,
+    status: String
   },
   
   computed: {
-    // TODO: make smart
-    loading: function() {
-      return false;
-    }
-  },
-  
-  methods: {
-    emitLoadPost: function(index) {
-      this.$emit('load-post', this.posts[index]);
-    }
-  },
-  
-  components: {
-    'upcoming-post': {
-      template: '#upcoming-post-template',
+    imageUrl: function() {
+      return app.tileUrls[this.type]
+    },
+    classes: function() {
+      let classes = {}
+      let typeClass = 'hex_' + this.type
       
-      props: {
-        active: Boolean,
-        nsfw: Boolean,
-        spoiler: Boolean,
-        title: String,
-        thumbnail: String
-      },
+      classes[typeClass] = true
+      classes['hex_start'] = (this.status === 'startTile')
+      console.log((this.status === 'startTile'))
       
-      filters: {
-        isThumbnail: function(url) {
-          // Cheat by just checking common cases I guess?
-          switch (url) {
-            case 'nsfw':
-              return app.config.nsfwThumbnailUrl;
-            case 'spoiler':
-              return app.config.spoilerThumbnailUrl;
-            
-            default:
-              return url;
-          }
-        },
-        // because the reddit api is derped
-        makeSSL: function(url) {
-          return url.replace('http://', 'https://');
-        }
-      },
-      
-      watch: {
-        active: function(isActive) {
-          if (isActive) {
-            var upcomingPosts = document.querySelectorAll('.upcoming-posts')[0],
-                buffer = 100;
-                
-            upcomingPosts.scrollTop = this.$el.offsetTop - buffer;
-          }
-        }
-      }
+      return classes
     }
   }
-});
+})
 
 var vm = new Vue({
   el: 'main',
@@ -93,7 +55,7 @@ var vm = new Vue({
   
   computed: {
     // basically changing multi-diemensional array to single diemension so my html can deal with it
-    tilesRendered: function() {
+    tilesToRender: function() {
       let tilesReadyforRender = []
       let rowNum = 0
       let columnNum = 0
@@ -102,9 +64,11 @@ var vm = new Vue({
         columnNum = 0
         for (let tile of row) {
           let newTile = {
+            id: columnNum + ',' + rowNum,
             row: rowNum,
             column: columnNum,
-            type: tile.type 
+            type: tile.type, 
+            status: tile.status 
           }
           tilesReadyforRender.push(newTile)
           columnNum++
@@ -113,8 +77,5 @@ var vm = new Vue({
       }
       return tilesReadyforRender
     }
-  },
-
-  methods: {
   }
 })

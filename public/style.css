@@ -46,6 +46,7 @@ main {
   background-color: #eee;
   width: 100%;
   height: calc(100vh - 3.875rem);
+  overflow: hidden;  
 }
 
 .hex-grid {
@@ -54,6 +55,7 @@ main {
   margin: 0 auto;
   overflow: hidden;
   list-style-type: none;
+  transform: scale(.8);
 }
 
 .hex {

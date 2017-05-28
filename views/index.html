@@ -46,102 +46,16 @@
 
     <main id="#main">
       <ul class="hex-grid">
-          <li
+          <tile
               class="hex"
-              v-for="option in options"
+              v-for="tile in tilesToRender"
+              v-bind:key="tile.id"
+              v-bind:type="tile.type"
+              v-bind:row="tile.row"
+              v-bind:column="tile.column"
+              v-bind:status="tile.status"
           >
-          </li>
-          <li class="hex">
-            <div class="hex-in">
-              <a href="#" class="hex-link">
-                <img src="https://cdn.glitch.com/7f1f1519-54c4-4968-b334-78d8fe707213%2Fplain-green-tile.svg?1495997250005">
-              </a>
-            </div>
-          </li>
-          <li class="hex">
-            <div class="hex-in">
-              <a href="#" class="hex-link">
-                <img src="https://cdn.glitch.com/7f1f1519-54c4-4968-b334-78d8fe707213%2Fplain-green-tile.svg?1495997250005">
-              </a>
-            </div>
-          </li>
-          <li class="hex">
-            <div class="hex-in">
-              <a href="#" class="hex-link">
-                <img src="https://cdn.glitch.com/7f1f1519-54c4-4968-b334-78d8fe707213%2Fplain-green-tile.svg?1495997250005">
-              </a>
-            </div>
-          </li>
-          <li class="hex hex_start">
-            <div class="hex-in">
-              <a href="#" class="hex-link">
-                <img src="https://cdn.glitch.com/7f1f1519-54c4-4968-b334-78d8fe707213%2Fruin-green-tile.svg?1495997249828">
-              </a>
-            </div>
-          </li>
-          <li class="hex">
-            <div class="hex-in">
-              <a href="#" class="hex-link">
-                <img src="https://cdn.glitch.com/7f1f1519-54c4-4968-b334-78d8fe707213%2Fplain-green-tile.svg?1495997250005">
-              </a>
-            </div>
-          </li>
-          <li class="hex">
-            <div class="hex-in">
-              <a href="#" class="hex-link">
-                <img src="https://cdn.glitch.com/7f1f1519-54c4-4968-b334-78d8fe707213%2Fplain-green-tile.svg?1495997250005">
-              </a>
-            </div>
-          </li>
-          <li class="hex">
-            <div class="hex-in">
-              <a href="#" class="hex-link">
-                <img src="https://cdn.glitch.com/7f1f1519-54c4-4968-b334-78d8fe707213%2Fplain-green-tile.svg?1495997250005">
-              </a>
-            </div>
-          </li>
-          <li class="hex">
-            <div class="hex-in">
-              <a href="#" class="hex-link">
-                <img src="https://cdn.glitch.com/7f1f1519-54c4-4968-b334-78d8fe707213%2Fplain-green-tile.svg?1495997250005">
-              </a>
-            </div>
-          </li>
-          <li class="hex">
-            <div class="hex-in">
-              <a href="#" class="hex-link">
-                <img src="https://cdn.glitch.com/7f1f1519-54c4-4968-b334-78d8fe707213%2Fplain-green-tile.svg?1495997250005">
-              </a>
-            </div>
-          </li>
-          <li class="hex">
-            <div class="hex-in">
-              <a href="#" class="hex-link">
-                <img src="https://cdn.glitch.com/7f1f1519-54c4-4968-b334-78d8fe707213%2Fplain-green-tile.svg?1495997250005">
-              </a>
-            </div>
-          </li>
-          <li class="hex">
-            <div class="hex-in">
-              <a href="#" class="hex-link">
-                <img src="https://cdn.glitch.com/7f1f1519-54c4-4968-b334-78d8fe707213%2Fplain-green-tile.svg?1495997250005">
-              </a>
-            </div>
-          </li>
-          <li class="hex">
-            <div class="hex-in">
-              <a href="#" class="hex-link">
-                <img src="https://cdn.glitch.com/7f1f1519-54c4-4968-b334-78d8fe707213%2Fplain-green-tile.svg?1495997250005">
-              </a>
-            </div>
-          </li>
-          <li class="hex">
-            <div class="hex-in">
-              <a href="#" class="hex-link">
-                <img src="https://cdn.glitch.com/7f1f1519-54c4-4968-b334-78d8fe707213%2Fplain-green-tile.svg?1495997250005">
-              </a>
-            </div>
-          </li>
+          </tile>
       </ul>
     </main>
 
