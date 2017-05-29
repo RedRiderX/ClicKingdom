@@ -114,13 +114,14 @@ main {
 
 .hex {
   opacity: .5;
-  transition: transform .3s;
+  transition: transform .1s;
   margin: 0;
-  position: relative;
 }
 .hex:hover {
   transform: scale(1.2);
-  z-index: 9999;
+}
+.hex:active {
+  transform: scale(.9);
 }
 .hex_start {
   opacity: 1;

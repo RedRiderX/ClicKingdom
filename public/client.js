@@ -11,12 +11,17 @@ var app = {
     town: 'https://cdn.glitch.com/7f1f1519-54c4-4968-b334-78d8fe707213%2Ftown-green-tile.svg?1495997250053',
   },
   startingTiles: [
-    [{type: 'plain'}, {type: 'plain'}, {type: 'plain'}, {type: 'plain'}, {type: 'plain'}],
-    [{type: 'plain'}, {type: 'plain'}, {type: 'plain'}, {type: 'plain'}],
-    [{type: 'plain'}, {type: 'plain'}, {type: 'ruin', status: 'startTile'}, {type: 'plain'}, {type: 'plain'}],
-    [{type: 'plain'}, {type: 'plain'}, {type: 'plain'}, {type: 'plain'}],
-    [{type: 'plain'}, {type: 'plain'}, {type: 'plain'}, {type: 'plain'}, {type: 'plain'}],
-  ]
+    [{}, {}, {}, {}, {}],
+    [{}, {}, {}, {}],
+    [{}, {}, {type: 'ruin', status: 'startTile'}, {}, {}],
+    [{}, {}, {}, {}],
+    [{}, {}, {}, {}, {}],
+  ],
+  defaultTileProps: {
+    type: 'plain',
+    status: 'undiscovered',
+    hp: 12
+  }
 }
 
 Vue.component('tile', {
@@ -39,7 +44,6 @@ Vue.component('tile', {
       
       classes[typeClass] = true
       classes['hex_start'] = (this.status === 'startTile')
-      console.log((this.status === 'startTile'))
       
       return classes
     }
@@ -60,16 +64,16 @@ var vm = new Vue({
       let rowNum = 0
       let columnNum = 0
       
-      for (let row of app.startingTiles) {
+      for (let row of this.tiles) {
         columnNum = 0
         for (let tile of row) {
-          let newTile = {
-            id: columnNum + ',' + rowNum,
-            row: rowNum,
-            column: columnNum,
-            type: tile.type, 
-            status: tile.status 
-          }
+          var newTile = app.defaultTileProps
+          Object.assign(newTile, tile)
+          
+          newTile.id = columnNum + ',' + rowNum
+          newTile.columnNum = columnNum
+          newTile.rowNum = rowNum
+          
           tilesReadyforRender.push(newTile)
           columnNum++
         }
