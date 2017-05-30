@@ -13,14 +13,35 @@ var app = {
   startingTiles: [
     [{}, {}, {}, {}, {}],
     [{}, {}, {}, {}],
-    [{}, {}, {type: 'ruin', status: 'startTile'}, {}, {}],
+    [{}, {}, {type: 'ruin', status: 'startTile', initialHp: 0}, {}, {}],
     [{}, {}, {}, {}],
     [{}, {}, {}, {}, {}],
   ],
-  defaultTileProps: {
-    type: 'plain',
-    status: 'undiscovered',
-    hp: 12
+  makeStartingTiles: function() {
+    // add default props to list of tiles
+    let tiles = app.startingTiles
+    let rowNum = 0
+    let columnNum = 0
+    
+    for (let row of tiles) {
+      columnNum = 0
+      for (let tile of row) {
+        // ugh js object references are dumb
+        tiles[rowNum][columnNum] = this.newTile(tile)
+        columnNum++
+      }
+      rowNum++
+    }
+    
+    return tiles
+  },
+  newTile: function(args) {
+    return {
+      type: args.type != null ? args.type : 'plain',
+      status: args.status != null ? args.status : 'undiscovered',
+      initialHp: args.initialHp != null ? args.initialHp : 12,
+      maxHp: args.maxHp != null ? args.maxHp : 12
+    }
   }
 }
 
@@ -31,7 +52,15 @@ Vue.component('tile', {
     type: String,
     row: Number,
     column: Number,
-    status: String
+    status: String,
+    initialHp: Number,
+    maxHp: Number
+  },
+  
+  data: function() {
+    return {
+      hp: this.initialHp
+    }
   },
   
   computed: {
@@ -44,8 +73,63 @@ Vue.component('tile', {
       
       classes[typeClass] = true
       classes['hex_start'] = (this.status === 'startTile')
+      classes['hex_active'] = this.active
+      classes['hex_revealed'] = this.revealed
       
       return classes
+    },
+    revealed: function() {
+      // will probably have more complicated logic here later
+      // I also probably need more complex states
+      if (this.status === 'startTile' ||
+          this.status === 'discovered'
+      ) {
+        return true
+      }
+      return false
+    },
+    active: function() {
+      if (this.hp < this.maxHp &&
+          this.hp > 0
+      ) {
+        return true
+      }
+      return false
+    }
+  },
+  
+  methods: {
+    click: function(event) {
+      // start out with the basics
+      if (this.type == 'ruin') {
+        // raise hp and if high enough trigger state change?
+        this.raiseHp()
+      }
+      return false
+    },
+    lowerHp: function() {
+      this.hp--
+      if (this.hp <= 0) {
+        this.updateState('')
+        this.$emit('update-state', {
+          eventType: 'healthEmpty',
+          currentState: this.type,
+          row: this.row,
+          column: this.column
+        })
+      }
+    },
+    raiseHp: function() {
+      this.hp++
+      if (this.hp >= this.maxHp) {
+        this.hp = this.maxHp
+        this.$emit('update-state', {
+          eventType: 'healthFull',
+          currentState: this.type,
+          row: this.row,
+          column: this.column
+        })
+      }
     }
   }
 })
@@ -54,7 +138,7 @@ var vm = new Vue({
   el: 'main',
   
   data: {
-    tiles: app.startingTiles
+    tiles: app.makeStartingTiles()
   },
   
   computed: {
@@ -68,12 +152,11 @@ var vm = new Vue({
         columnNum = 0
         for (let tile of row) {
           // ugh js object references are dumb
-          let newTile = Object.assign({}, app.defaultTileProps)
-          Object.assign(newTile, tile)
+          let newTile = Object.assign({}, tile)
           
           newTile.id = columnNum + ',' + rowNum
-          newTile.columnNum = columnNum
-          newTile.rowNum = rowNum
+          newTile.column = columnNum
+          newTile.row = rowNum
           
           tilesReadyforRender.push(newTile)
           columnNum++
@@ -82,5 +165,63 @@ var vm = new Vue({
       }
       return tilesReadyforRender
     }
-  }
+  },
+  
+  methods: {
+    handleTileStateChange: function(event) {
+      console.log(event)
+      switch (event.eventType) {
+        case 'healthFull':
+          if (event.currentState === 'ruin') {
+            this.upgradeTile(event.row, event.column, 'castle')
+            this.triggerFanfare()
+          }
+          break
+      }
+    },
+    triggerFanfare: function() {
+      // TODO: idk make confetti happen or something
+    },
+    upgradeTile: function(row, column, newType) {
+      // TODO: handle of bunch of logic for type changes
+      // right now ruin to castle just means new image and full health for tile
+      this.tiles[row][column]['type'] = newType
+      this.revealSurrondingTiles(row, column)
+    },
+    revealSurrondingTiles: function(row, column) {
+      let tilesAffected = [
+        {
+          row: row - 1,
+          column: column - 1
+        },
+        {
+          row: row - 1,
+          column: column // because hex grid
+        },
+        {
+          row: row,
+          column: column - 1
+        },
+        {
+          row: row,
+          column: column + 1
+        },
+        {
+          row: row + 1,
+          column: column - 1
+        },
+        {
+          row: row + 1,
+          column: column // because hex grid
+        }
+      ]
+      
+      for (let tile of tilesAffected) {
+        if (this.tiles[tile.row][tile.column].status === 'undiscovered') {
+          this.tiles[tile.row][tile.column].status = 'discovered'
+        }
+      }
+    }
+  },
+  
 })

@@ -16,13 +16,22 @@
     <script type="text/x-template" id="tile-template">
       <li
         v-bind:class="classes"
+        v-on:click="click"
       >
         <div class="hex-in">
-          <a href="#" class="hex-link">
+          <div class="hex-link">
             <img 
               v-bind:src="imageUrl"
             >
-          </a>
+            <meter 
+              min="0" 
+              v-bind:max="maxHp"
+              v-bind:low="maxHp * .25"
+              v-bind:high="maxHp * .75"
+              v-bind:optimum="maxHp"
+              v-bind:value="hp">
+            </meter>
+          </div>
         </div>
       </li>
     </script>
@@ -54,6 +63,9 @@
               v-bind:row="tile.row"
               v-bind:column="tile.column"
               v-bind:status="tile.status"
+              v-bind:initial-hp="tile.initialHp"
+              v-bind:max-hp="tile.maxHp"
+              v-on:update-state="handleTileStateChange"
           >
           </tile>
       </ul>
