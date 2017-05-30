@@ -67,7 +67,8 @@ var vm = new Vue({
       for (let row of this.tiles) {
         columnNum = 0
         for (let tile of row) {
-          var newTile = app.defaultTileProps
+          // ugh js object references are dumb
+          let newTile = Object.assign({}, app.defaultTileProps)
           Object.assign(newTile, tile)
           
           newTile.id = columnNum + ',' + rowNum
