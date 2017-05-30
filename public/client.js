@@ -17,6 +17,12 @@ var app = {
     [{}, {}, {}, {}],
     [{}, {}, {}, {}, {}],
   ],
+  defaultTileProps: {
+    type: 'plain',
+    status: 'undiscovered',
+    initialHp: 12,
+    maxHp: 12
+  },
   makeStartingTiles: function() {
     // add default props to list of tiles
     let tiles = app.startingTiles
@@ -27,21 +33,13 @@ var app = {
       columnNum = 0
       for (let tile of row) {
         // ugh js object references are dumb
-        tiles[rowNum][columnNum] = this.newTile(tile)
+        tiles[rowNum][columnNum] = Object.assign(Object.assign({}, this.defaultTileProps), tile)
         columnNum++
       }
       rowNum++
     }
     
     return tiles
-  },
-  newTile: function(args) {
-    return {
-      type: args.type != null ? args.type : 'plain',
-      status: args.status != null ? args.status : 'undiscovered',
-      initialHp: args.initialHp != null ? args.initialHp : 12,
-      maxHp: args.maxHp != null ? args.maxHp : 12
-    }
   }
 }
 
