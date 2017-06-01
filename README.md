@@ -25,3 +25,10 @@ Where should the meter go?
 What does attack power do?
   * Does it mean your soldiers are automatically weakening adjacent tiles?
   * Does it mean your soldiers attack the tiles you start attacking?
+
+What are the player's stats?
+  * gold
+  * pop
+  * attack power
+  * click power
+  * food

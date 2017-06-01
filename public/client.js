@@ -93,6 +93,24 @@ Vue.component('tile', {
         return true
       }
       return false
+    },
+    activeMeters: function() {
+      let activeMeters = {}
+      
+      if (this.hp < this.maxHp &&
+          this.hp > 0
+      ) {
+        activeMeters.hp = {
+          min: 0,
+          max: this.maxHp, 
+          low: this.maxHp * .25,
+          high: this.maxHp * .75,
+          optimum: this.maxHp,
+          value: this.hp
+        } 
+      }
+      
+      return activeMeters
     }
   },
   
@@ -128,6 +146,28 @@ Vue.component('tile', {
           column: this.column
         })
       }
+    }
+  }
+})
+
+Vue.component('tile-meter', {
+  template: '#tile-meter-template',
+  
+  props: {
+    type: String,
+    min: Number,
+    max: Number,
+    low: Number,
+    high: Number,
+    optimum: Number,
+    value: Number
+  },
+  
+  computed: {
+    classes: function() {
+      let classes = {}
+      classes['meter_type_' + this.type] = true
+      return classes
     }
   }
 })

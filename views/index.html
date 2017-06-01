@@ -23,17 +23,39 @@
             <img 
               v-bind:src="imageUrl"
             >
-            <meter 
-              min="0" 
-              v-bind:max="maxHp"
-              v-bind:low="maxHp * .25"
-              v-bind:high="maxHp * .75"
-              v-bind:optimum="maxHp"
-              v-bind:value="hp">
-            </meter>
+            <div class="tile-meters">
+              <tile-meter
+                v-for="(meter, type) in activeMeters"
+                v-bind:key="type"
+                v-bind:type="type"
+                v-bind:min="meter.min"
+                v-bind:max="meter.max"
+                v-bind:low="meter.low"
+                v-bind:high="meter.high"
+                v-bind:optimum="meter.optimum"
+                v-bind:value="meter.value"
+              >
+              </tile-meter>
+            </div>
           </div>
         </div>
       </li>
+    </script>
+    <script type="text/x-template" id="tile-meter-template">
+      <div
+        class="tile-meter__wrapper"
+        v-bind:class="classes"
+      >
+        <meter 
+          v-bind:min="min" 
+          v-bind:max="max"
+          v-bind:low="low"
+          v-bind:high="high"
+          v-bind:optimum="optimum"
+          v-bind:value="value"
+        >
+        </meter>
+      </div>
     </script>
     <!-- END of component templates -->
     
