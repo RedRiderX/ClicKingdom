@@ -4,11 +4,21 @@
 
 var app = {
   tileUrls: {
-    farm: 'https://cdn.glitch.com/7f1f1519-54c4-4968-b334-78d8fe707213%2Ffarm-green-tile.svg?1495997249777',
-    ruin: 'https://cdn.glitch.com/7f1f1519-54c4-4968-b334-78d8fe707213%2Fruin-green-tile.svg?1495997249828',
-    castle: 'https://cdn.glitch.com/7f1f1519-54c4-4968-b334-78d8fe707213%2Fmedium-castle-green-tile.svg?1495997249834',
-    plain: 'https://cdn.glitch.com/7f1f1519-54c4-4968-b334-78d8fe707213%2Fplain-green-tile.svg?1495997250005',
-    town: 'https://cdn.glitch.com/7f1f1519-54c4-4968-b334-78d8fe707213%2Ftown-green-tile.svg?1495997250053',
+    neutral: {
+      farm: 'https://cdn.glitch.com/7f1f1519-54c4-4968-b334-78d8fe707213%2Ffarm-green-tile.svg?1495997249777',
+      ruin: 'https://cdn.glitch.com/7f1f1519-54c4-4968-b334-78d8fe707213%2Fruin-green-tile.svg?1495997249828',
+      castle: 'https://cdn.glitch.com/7f1f1519-54c4-4968-b334-78d8fe707213%2Fmedium-castle-green-tile.svg?1495997249834',
+      plain: 'https://cdn.glitch.com/7f1f1519-54c4-4968-b334-78d8fe707213%2Fplain-green-tile.svg?1495997250005',
+      town: 'https://cdn.glitch.com/7f1f1519-54c4-4968-b334-78d8fe707213%2Ftown-green-tile.svg?1495997250053',
+    },
+    red: {
+      castle: 'https://cdn.glitch.com/7f1f1519-54c4-4968-b334-78d8fe707213%2Fmedium-castle-red-tile.svg?1495997249834',
+      plain: 'https://cdn.glitch.com/7f1f1519-54c4-4968-b334-78d8fe707213%2Fplain-red-tile.svg?1495997250005',
+    },
+    blue: {
+      castle: 'https://cdn.glitch.com/7f1f1519-54c4-4968-b334-78d8fe707213%2Fmedium-castle-blue-tile.svg?1496500760377',
+      plain: 'https://cdn.glitch.com/7f1f1519-54c4-4968-b334-78d8fe707213%2Fplain-blue-tile.svg?1496500760310',
+    }
   },
   startingTiles: [
     [{}, {}, {}, {}, {}],
@@ -19,6 +29,7 @@ var app = {
   ],
   defaultTileProps: {
     type: 'plain',
+    faction: 'neutral',
     status: 'undiscovered',
     initialHp: 12,
     maxHp: 12
@@ -176,7 +187,12 @@ var vm = new Vue({
   el: 'main',
   
   data: {
-    tiles: app.makeStartingTiles()
+    tiles: app.makeStartingTiles(),
+    gold: 0,
+    pop: 0,
+    attackPower: 0,
+    clickPower: 0,
+    food: 0,
   },
   
   computed: {

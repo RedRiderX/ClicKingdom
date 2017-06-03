@@ -2,6 +2,8 @@
 :root {
   --grid-col-num: 5;
   --grid-row-num: 5;
+  --grid-height: 43rem;
+  --grid-width: 50rem;
 }
 
 html {
@@ -53,9 +55,13 @@ main {
   display: flex;
   flex-wrap: wrap;
   margin: 0 auto;
+  padding: 0;
+  padding-bottom: 4rem;
   overflow: hidden;
   list-style-type: none;
-  transform: scale(.8);
+  transform: scale(.9);
+  height: var(--grid-height);
+  width: var(--grid-width);
 }
 
 .hex {
@@ -81,7 +87,7 @@ main {
 }
 .hex-in * {
   visibility: visible;
-  outline:1px solid transparent; /* fix for jagged edges in FF on hover transition */
+  outline: 1px solid transparent; /* fix for jagged edges in FF on hover transition */
 }
 .hex-link {
   position: absolute;
@@ -107,6 +113,13 @@ main {
 
 /*** HEXAGON SIZING AND EVEN ROW INDENTATION *****************************************************************/
 .hex {
+  opacity: .5;
+  filter: blur(4px);
+  transition: 
+    transform .1s,
+    opacity .4s,
+    filter .4s;
+  margin: 0;
   width: calc(100% / var(--grid-col-num));
   
   
@@ -120,16 +133,6 @@ main {
 }
 .hex:nth-child(9n+6) { /* first hexagon of even rows */
   margin-left:calc((100% / var(--grid-col-num)) / 2);  /* = width of .hex / 2  to indent even rows */
-}
-
-.hex {
-  opacity: .5;
-  filter: blur(4px);
-  transition: 
-    transform .1s,
-    opacity .4s,
-    filter .4s;
-  margin: 0;
 }
 
 .hex:hover {
