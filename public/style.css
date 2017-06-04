@@ -108,7 +108,7 @@ main {
   height: 100%;
   margin: 0 auto;
   transform: rotate3d(0,0,0,0deg);
-  cursor: pointer;
+/*   cursor: pointer; */
 }
 
 /*** HEXAGON SIZING AND EVEN ROW INDENTATION *****************************************************************/
@@ -132,11 +132,13 @@ main {
 
 }
 .hex:nth-child(9n+6) { /* first hexagon of even rows */
-  margin-left:calc((100% / var(--grid-col-num)) / 2);  /* = width of .hex / 2  to indent even rows */
+  margin-left: calc((100% / var(--grid-col-num)) / 2);  /* = width of .hex / 2  to indent even rows */
 }
 
 .hex:hover {
-  transform: scale(1.2);
+  transform: scale(1.09);
+  position: relative;
+  z-index: 1;
 }
 
 .hex:active {
@@ -191,4 +193,58 @@ meter::-webkit-meter-optimum-value {
 
 .meter_type_hp meter:before {
   content: '🛠️';
+}
+
+.player-stats {
+  background: #dfdfdf;
+  margin: 0;
+  padding: .5rem;
+  font-size: 1.5rem;
+  list-style-type: none;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-around;
+}
+
+.player-stat { 
+  display: block;
+  flex: 0 1 7rem;
+  background: #efefef;
+/*   color: white; */
+  border-radius: .25rem;
+  overflow: hidden;
+/*   padding: .25rem; */
+  line-height: 1;
+}
+
+.player-stat__label {
+  display: inline-block;
+/*   height: 1.8rem; */
+  vertical-align: middle;
+  padding: .5rem;
+  background: #ababab;
+}
+
+.player-state__value {
+  display: inline-block;
+  vertical-align: middle;
+  padding: .5rem;
+}
+
+/* silly cursor trail that amuses me */
+#cursor-trail {
+  position: absolute;
+  display: none;
+/*   background: blue; */
+  pointer-events: none;
+  font-size: 1.4rem;
+  cursor: none;
+}
+
+#cursor-trail.cursor-trail_active {
+  display: block;
+}
+
+main.main_cursor-trail_active {
+  cursor: none;
 }

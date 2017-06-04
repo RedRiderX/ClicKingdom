@@ -51,14 +51,27 @@ var app = {
     }
     
     return tiles
+  },
+  cursorStates: {
+    reign: '👑',
+    denied: '🚫',
+    build: '🛠️',
+    fight: '⚔️',
   }
 }
+
+// silly cursor trail that amuses me
+$(document)
+  .mousemove(function(e){
+    $("#cursor-trail").css({left:e.pageX, top:e.pageY});
+  })
 
 Vue.component('tile', {
   template: '#tile-template',
   
   props: {
     type: String,
+    faction: String,
     row: Number,
     column: Number,
     status: String,
@@ -74,7 +87,7 @@ Vue.component('tile', {
   
   computed: {
     imageUrl: function() {
-      return app.tileUrls[this.type]
+      return app.tileUrls[this.faction][this.type]
     },
     classes: function() {
       let classes = {}
@@ -140,7 +153,6 @@ Vue.component('tile', {
         this.updateState('')
         this.$emit('update-state', {
           eventType: 'healthEmpty',
-          currentState: this.type,
           row: this.row,
           column: this.column
         })
@@ -152,7 +164,6 @@ Vue.component('tile', {
         this.hp = this.maxHp
         this.$emit('update-state', {
           eventType: 'healthFull',
-          currentState: this.type,
           row: this.row,
           column: this.column
         })
@@ -193,6 +204,7 @@ var vm = new Vue({
     attackPower: 0,
     clickPower: 0,
     food: 0,
+    cursorTrail: false,
   },
   
   computed: {
@@ -226,8 +238,11 @@ var vm = new Vue({
       console.log(event)
       switch (event.eventType) {
         case 'healthFull':
-          if (event.currentState === 'ruin') {
-            this.upgradeTile(event.row, event.column, 'castle')
+          let tileInQuestion = this.tiles[event.row][event.column]
+          
+          if (tileInQuestion.type === 'ruin') {
+            this.upgradeTile(event.row, event.column, 'blue', 'castle')
+            this.cursorTrail = app.cursorStates.reign
             this.triggerFanfare()
           }
           break
@@ -236,11 +251,15 @@ var vm = new Vue({
     triggerFanfare: function() {
       // TODO: idk make confetti happen or something
     },
-    upgradeTile: function(row, column, newType) {
+    upgradeTile: function(row, column, faction, newType) {
       // TODO: handle of bunch of logic for type changes
       // right now ruin to castle just means new image and full health for tile
+      this.tiles[row][column]['faction'] = faction
       this.tiles[row][column]['type'] = newType
-      this.revealSurrondingTiles(row, column)
+      
+      if (faction === 'blue') {
+        this.revealSurrondingTiles(row, column)
+      }
     },
     revealSurrondingTiles: function(row, column) {
       let tilesAffected = [
@@ -275,7 +294,30 @@ var vm = new Vue({
           this.tiles[tile.row][tile.column].status = 'discovered'
         }
       }
-    }
+    },
+    handleTileMouseEnter: function(row, column) {
+      let type = this.tiles[row][column].type
+      let faction = this.tiles[row][column].faction
+      let status = this.tiles[row][column].status
+      
+      if (status === 'undiscovered') {
+        this.cursorTrail = app.cursorStates.denied
+        return;
+      }
+      if (type === 'ruin') {
+        this.cursorTrail = app.cursorStates.build
+        return
+      }
+      if (type === 'plain') {
+        this.cursorTrail = app.cursorStates.fight
+        return
+      }
+      
+      this.cursorTrail = app.cursorStates.reign
+    },
+    handleTileMouseLeave: function(row, column) {
+      this.cursorTrail = false
+    },
   },
   
 })

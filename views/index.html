@@ -12,99 +12,132 @@
     <link rel="stylesheet" href="/style.css">
   </head>
   <body>
-    <!-- component templates -->
-    <script type="text/x-template" id="tile-template">
-      <li
-        v-bind:class="classes"
-        v-on:click="click"
-      >
-        <div class="hex-in">
-          <div class="hex-link">
-            <img 
-              v-bind:src="imageUrl"
+  <!-- component templates -->
+  <script type="text/x-template" id="tile-template">
+    <li
+      v-bind:class="classes"
+      v-on:click="click"
+    >
+      <div class="hex-in">
+        <div class="hex-link">
+          <img 
+            v-bind:src="imageUrl"
+          >
+          <div class="tile-meters">
+            <tile-meter
+              v-for="(meter, type) in activeMeters"
+              v-bind:key="type"
+              v-bind:type="type"
+              v-bind:min="meter.min"
+              v-bind:max="meter.max"
+              v-bind:low="meter.low"
+              v-bind:high="meter.high"
+              v-bind:optimum="meter.optimum"
+              v-bind:value="meter.value"
             >
-            <div class="tile-meters">
-              <tile-meter
-                v-for="(meter, type) in activeMeters"
-                v-bind:key="type"
-                v-bind:type="type"
-                v-bind:min="meter.min"
-                v-bind:max="meter.max"
-                v-bind:low="meter.low"
-                v-bind:high="meter.high"
-                v-bind:optimum="meter.optimum"
-                v-bind:value="meter.value"
-              >
-              </tile-meter>
-            </div>
+            </tile-meter>
           </div>
         </div>
-      </li>
-    </script>
-    <script type="text/x-template" id="tile-meter-template">
-      <div
-        class="tile-meter__wrapper"
-        v-bind:class="classes"
-      >
-        <meter 
-          v-bind:min="min" 
-          v-bind:max="max"
-          v-bind:low="low"
-          v-bind:high="high"
-          v-bind:optimum="optimum"
-          v-bind:value="value"
-        >
-        </meter>
       </div>
-    </script>
-    <!-- END of component templates -->
-    
-    <div class="support-warning">
-      <h1>
-        Uh oh.
-      </h1>
-      <p>
-        Looks like your browser doesn't support CSS Variables, so this site probably won't make much sense to you.
-        You can check <a href="http://caniuse.com/#feat=css-grid">Can I Use</a> to find a browser that does 
-        support this feature.
-      </p>
+    </li>
+  </script>
+  <script type="text/x-template" id="tile-meter-template">
+    <div
+      class="tile-meter__wrapper"
+      v-bind:class="classes"
+    >
+      <meter 
+        v-bind:min="min" 
+        v-bind:max="max"
+        v-bind:low="low"
+        v-bind:high="high"
+        v-bind:optimum="optimum"
+        v-bind:value="value"
+      >
+      </meter>
     </div>
-    <header>
-      <h1 class="main-title">
-        🏘️ 🌾 🏰 ClicKingdom 🏰 ⚔️ 🏘️
-      </h1>
-    </header>
+  </script>
+  <!-- END of component templates -->
 
-    <main id="#main">
-      <ul class="hex-grid">
-          <tile
-              class="hex"
-              v-for="tile in tilesToRender"
-              v-bind:key="tile.id"
-              v-bind:type="tile.type"
-              v-bind:row="tile.row"
-              v-bind:column="tile.column"
-              v-bind:status="tile.status"
-              v-bind:initial-hp="tile.initialHp"
-              v-bind:max-hp="tile.maxHp"
-              v-on:update-state="handleTileStateChange"
-          >
-          </tile>
-      </ul>
-    </main>
+  <div class="support-warning">
+    <h1>
+      Uh oh.
+    </h1>
+    <p>
+      Looks like your browser doesn't support CSS Variables, so this site probably won't make much sense to you.
+      You can check <a href="http://caniuse.com/#feat=css-grid">Can I Use</a> to find a browser that does 
+      support this feature.
+    </p>
+  </div>
+  <header>
+    <h1 class="main-title">
+      🏘️ 🌾 🏰 ClicKingdom 🏰 ⚔️ 🏘️
+    </h1>
+  </header>
 
-    <footer>
-      <a href="https://glitch.com/edit/#!/clickingdom">
-        Remix this in Glitch
-      </a>
-    </footer>
+  <main 
+    id="#main"
+    v-bind:class="{'main_cursor-trail_active': cursorTrail}"
+  >
+    <ul class="player-stats">
+      <li class="player-stat player-stat_gold">
+        <span class="player-stat__label">💰</span>
+        <span class="player-state__value">{{gold}}</span>
+      </li>
+      <li class="player-stat player-stat_pop">
+        <span class="player-stat__label">👥</span>
+        <span class="player-state__value">{{pop}}</span>
+      </li>
+      <li class="player-stat player-stat_attackPower">
+        <span class="player-stat__label">⚔️</span>
+        <span class="player-state__value">{{attackPower}}</span>
+      </li>
+      <li class="player-stat player-stat_clickPower">
+        <span class="player-stat__label">👑</span>
+        <span class="player-state__value">{{clickPower}}</span>
+      </li>
+      <li class="player-stat player-stat_food">
+        <span class="player-stat__label">🍖</span>
+        <span class="player-state__value">{{food}}</span>
+      </li>
+    </ul>
+    <div class="tile-menu">
+      
+    </div>
+    <ul class="hex-grid">
+        <tile
+            class="hex"
+            v-for="tile in tilesToRender"
+            v-bind:key="tile.id"
+            v-bind:type="tile.type"
+            v-bind:faction="tile.faction"
+            v-bind:row="tile.row"
+            v-bind:column="tile.column"
+            v-bind:status="tile.status"
+            v-bind:initial-hp="tile.initialHp"
+            v-bind:max-hp="tile.maxHp"
+            v-on:update-state="handleTileStateChange"
+            v-on:mouseenter.native="handleTileMouseEnter(tile.row, tile.column)"
+            v-on:mouseleave.native="handleTileMouseLeave(tile.row, tile.column)"
+        >
+        </tile>
+    </ul>
+    <span id="cursor-trail" v-bind:class="{'cursor-trail_active': cursorTrail}">
+      {{cursorTrail}}
+    </span>
+  </main>
 
-    <!-- Your web-app is https, so your scripts need to be too -->
-    <script src="https://code.jquery.com/jquery-2.2.1.min.js"
-            integrity="sha256-gvQgAFzTH6trSrAWoH1iPo9Xc96QxSZ3feW6kem+O00="
-            crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/vue@2.3.3"></script>
-    <script src="/client.js"></script>
+  <footer>
+    <a href="https://glitch.com/edit/#!/clickingdom">
+      Remix this in Glitch
+    </a>
+  </footer>
 
+  <!-- Your web-app is https, so your scripts need to be too -->
+  <script src="https://code.jquery.com/jquery-2.2.1.min.js"
+          integrity="sha256-gvQgAFzTH6trSrAWoH1iPo9Xc96QxSZ3feW6kem+O00="
+          crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/vue@2.3.3"></script>
+  <script src="/client.js"></script>
   </body>
 </html>
