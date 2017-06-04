@@ -78,31 +78,50 @@
   <main 
     id="#main"
     v-bind:class="{'main_cursor-trail_active': cursorTrail}"
+    v-on:click="handleClick"
   >
-    <ul class="player-stats">
-      <li class="player-stat player-stat_gold">
-        <span class="player-stat__label">💰</span>
-        <span class="player-state__value">{{gold}}</span>
-      </li>
-      <li class="player-stat player-stat_pop">
-        <span class="player-stat__label">👥</span>
-        <span class="player-state__value">{{pop}}</span>
-      </li>
-      <li class="player-stat player-stat_attackPower">
-        <span class="player-stat__label">⚔️</span>
-        <span class="player-state__value">{{attackPower}}</span>
-      </li>
-      <li class="player-stat player-stat_clickPower">
-        <span class="player-stat__label">👑</span>
-        <span class="player-state__value">{{clickPower}}</span>
-      </li>
-      <li class="player-stat player-stat_food">
-        <span class="player-stat__label">🍖</span>
-        <span class="player-state__value">{{food}}</span>
-      </li>
-    </ul>
-    <div class="tile-menu">
-      
+    <div class="hud">
+      <ul class="player-stats">
+        <li class="player-stat player-stat_gold">
+          <span class="player-stat__label">💰</span>
+          <span class="player-state__value">{{gold}}</span>
+        </li>
+        <li class="player-stat player-stat_pop">
+          <span class="player-stat__label">👥</span>
+          <span class="player-state__value">{{pop}}</span>
+        </li>
+        <li class="player-stat player-stat_attackPower">
+          <span class="player-stat__label">⚔️</span>
+          <span class="player-state__value">{{attackPower}}</span>
+        </li>
+        <li class="player-stat player-stat_clickPower">
+          <span class="player-stat__label">👑</span>
+          <span class="player-state__value">{{clickPower}}</span>
+        </li>
+        <li class="player-stat player-stat_food">
+          <span class="player-stat__label">🍖</span>
+          <span class="player-state__value">{{food}}</span>
+        </li>
+      </ul>
+      <div class="tile-menu">
+        <span
+          class="progress-indicator"
+          v-show="progressIndicator"
+        >{{progressIndicator}}</span>
+        <ul
+          class="tile-actions"
+          v-show="tileActions.length"
+        >
+          <li 
+              class="tile-action"
+              v-for="action in tileActions"
+              v-on:click="doTileAction(action.name)"
+              v-bind:class="['tile-action_' + action.name]"
+          >
+            {{action.title}}
+          </li>
+        </ul>
+      </div>
     </div>
     <ul class="hex-grid">
         <tile
@@ -118,7 +137,7 @@
             v-bind:max-hp="tile.maxHp"
             v-bind:active="tile.row === activeTile.row && tile.column === activeTile.column"
             v-on:update-state="handleTileStateChange"
-            v-on:click.native="makeTileActive(tile.row, tile.column)"
+            v-on:click.native="makeTileActive(tile.row, tile.column, $event)"
             v-on:mouseenter.native="handleTileMouseEnter(tile.row, tile.column)"
             v-on:mouseleave.native="handleTileMouseLeave(tile.row, tile.column)"
         >

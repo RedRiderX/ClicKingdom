@@ -4,6 +4,8 @@
   --grid-row-num: 5;
   --grid-height: 43rem;
   --grid-width: 50rem;
+  --player-color: #1c83ff;
+  --active-color: #ff6600;
 }
 
 html {
@@ -197,6 +199,7 @@ meter::-webkit-meter-optimum-value {
 
 .player-stats {
   background: #dfdfdf;
+  background: var(--player-color);
   margin: 0;
   padding: .5rem;
   font-size: 1.5rem;

@@ -58,6 +58,22 @@ var app = {
     build: '🛠️',
     fight: '⚔️',
     annex: '🚩',
+  },
+  startingCosts: {
+    barracks: {
+      goldCost: 1,
+      foodCost: 1,
+      popCost: 1
+    },
+    town: {
+      popCost: 1
+    },
+    farm: {
+      popCost: 1
+    },
+    castle: {
+      popCost: 2
+    }
   }
 }
 
@@ -202,6 +218,20 @@ var vm = new Vue({
     activeTile: {
       column: null,
       row: null
+    },
+    barracks: {
+      goldCost: app.startingCosts.barracks.goldCost,
+      foodCost: app.startingCosts.barracks.foodCost,
+      popCost: app.startingCosts.barracks.popCost
+    },
+    town: {
+      popCost: app.startingCosts.town.popCost
+    },
+    farm: {
+      popCost: app.startingCosts.farm.popCost
+    },
+    castle: {
+      popCost: app.startingCosts.castle.popCost
     }
   },
   
@@ -228,6 +258,47 @@ var vm = new Vue({
         rowNum++
       }
       return tilesReadyforRender
+    },
+    // TODO: make this do something
+    progressIndicator: function() {
+      return '⌛'
+    },
+    tileActions: function() {
+      let actions = []
+      if (this.activeTile.row === null || this.activeTile.column === null) {
+        return actions
+      }
+      let pertinentTile = this.tiles[this.activeTile.row][this.activeTile.column]
+      
+      if (this.gold - this.barracks.goldCost > 0 &&
+          this.food - this.barracks.foodCost > 0 &&
+          this.pop - this.barracks.popCost > 0
+      ) {
+          actions.push({
+            title: 'Make Barracks',
+            name: 'makeBarracks'
+          })
+      }
+      if (this.pop - this.town.popCost > 0) {
+          actions.push({
+            title: 'Make Town',
+            name: 'makeTown'
+          })
+      }
+      if (this.pop - this.farm.popCost > 0) {
+          actions.push({
+            title: 'Make Farm',
+            name: 'makeFarm'
+          })
+      }
+      if (this.pop - this.castle.popCost > 0) {
+          actions.push({
+            title: 'Make Castle',
+            name: 'makeCastle'
+          })
+      }
+      
+      return actions
     }
   },
   
@@ -320,10 +391,22 @@ var vm = new Vue({
     handleTileMouseLeave: function(row, column) {
       this.cursorTrail = false
     },
-    makeTileActive: function(row, column) {
+    makeTileActive: function(row, column, event) {
+      if (this.tiles[row][column].status === 'undiscovered') {
+        return
+      }
+      
       this.activeTile = {
         row,
         column
+      }
+      
+      event.stopPropagation()
+    },
+    handleClick: function(event) {      
+      this.activeTile = {
+        row: null,
+        column: null
       }
     }
   },
