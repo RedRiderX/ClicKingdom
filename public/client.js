@@ -57,6 +57,7 @@ var app = {
     denied: '🚫',
     build: '🛠️',
     fight: '⚔️',
+    annex: '🚩',
   }
 }
 
@@ -76,7 +77,8 @@ Vue.component('tile', {
     column: Number,
     status: String,
     initialHp: Number,
-    maxHp: Number
+    maxHp: Number,
+    active: Boolean
   },
   
   data: function() {
@@ -105,14 +107,6 @@ Vue.component('tile', {
       // I also probably need more complex states
       if (this.status === 'startTile' ||
           this.status === 'discovered'
-      ) {
-        return true
-      }
-      return false
-    },
-    active: function() {
-      if (this.hp < this.maxHp &&
-          this.hp > 0
       ) {
         return true
       }
@@ -205,6 +199,10 @@ var vm = new Vue({
     clickPower: 0,
     food: 0,
     cursorTrail: false,
+    activeTile: {
+      column: null,
+      row: null
+    }
   },
   
   computed: {
@@ -308,8 +306,12 @@ var vm = new Vue({
         this.cursorTrail = app.cursorStates.build
         return
       }
-      if (type === 'plain') {
+      if (type === 'village') {
         this.cursorTrail = app.cursorStates.fight
+        return
+      }
+      if (faction === 'neutral') {
+        this.cursorTrail = app.cursorStates.annex
         return
       }
       
@@ -318,6 +320,12 @@ var vm = new Vue({
     handleTileMouseLeave: function(row, column) {
       this.cursorTrail = false
     },
+    makeTileActive: function(row, column) {
+      this.activeTile = {
+        row,
+        column
+      }
+    }
   },
   
 })

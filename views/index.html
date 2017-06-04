@@ -116,7 +116,9 @@
             v-bind:status="tile.status"
             v-bind:initial-hp="tile.initialHp"
             v-bind:max-hp="tile.maxHp"
+            v-bind:active="tile.row === activeTile.row && tile.column === activeTile.column"
             v-on:update-state="handleTileStateChange"
+            v-on:click.native="makeTileActive(tile.row, tile.column)"
             v-on:mouseenter.native="handleTileMouseEnter(tile.row, tile.column)"
             v-on:mouseleave.native="handleTileMouseLeave(tile.row, tile.column)"
         >

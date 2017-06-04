@@ -102,12 +102,12 @@ main {
 
 /*** HEX CONTENT **********************************************************************/
 .hex img {
-  left: -100%;
-  right: -100%;
-  width: auto;
+/*   left: -100%; */
+/*   right: -100%; */
+/*   width: auto; */
   height: 100%;
-  margin: 0 auto;
-  transform: rotate3d(0,0,0,0deg);
+/*   margin: 0 auto; */
+/*   transform: rotate3d(0,0,0,0deg); */
 /*   cursor: pointer; */
 }
 
@@ -247,4 +247,21 @@ meter::-webkit-meter-optimum-value {
 
 main.main_cursor-trail_active {
   cursor: none;
+}
+
+/* active tile mark */
+.hex.hex_active .hex-link:after {
+    content: '';
+    pointer-events: none;
+/*     width: 100%; */
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+/*     height: 100%; */
+    background: url('https://cdn.glitch.com/7f1f1519-54c4-4968-b334-78d8fe707213%2Factive-tile-frame.svg?1496596688832') no-repeat;
+/*     background-size: cover; */
+    background-size: 93.5%;
+    background-position: 50%;
 }
