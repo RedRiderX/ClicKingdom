@@ -152,13 +152,15 @@ Vue.component('tile', {
       if (this.strength < this.maxStrength &&
           this.strength > 0
       ) {
+        // Find strength as an inverse percentage of maxStrength
+        // eg 75 strength is 25% inverse percentage of 100 maxStrength
         activeMeters.strength = {
           min: 0,
-          max: this.maxStrength, 
-          low: this.maxStrength * .25,
-          high: this.maxStrength * .75,
-          optimum: this.maxStrength,
-          value: this.strength
+          max: 1, 
+          low: .25,
+          high: .75,
+          optimum: 1,
+          value: 1 - (this.strength / this.maxStrength)
         } 
       }
       
@@ -168,7 +170,9 @@ Vue.component('tile', {
   
   methods: {
     click: function(event) {
-      // start out with the basics
+      if (this.status == 'undiscovered') {
+        return false  
+      }
       if (this.type == 'ruin') {
         // lower strength and until 0 then trigger state change?
         this.lowerStrength()
@@ -368,10 +372,10 @@ var vm = new Vue({
       this.tiles[row][column]['type'] = newType
       
       if (faction === 'blue') {
-        this.revealSurrondingTiles(row, column)
+        this.revealSurroundingTiles(row, column)
       }
     },
-    revealSurrondingTiles: function(row, column) {
+    revealSurroundingTiles: function(row, column) {
       let tilesAffected = [
         {
           row: row - 1,
@@ -399,6 +403,14 @@ var vm = new Vue({
         }
       ]
       
+      // Can't think of an esier solution than tweaking numbers for even rows
+      if (row % 2 !== 0) {
+        tilesAffected[0].column++ 
+        tilesAffected[1].column++ 
+        tilesAffected[4].column++ 
+        tilesAffected[5].column++ 
+      }
+      
       for (let tile of tilesAffected) {
         if (this.tiles[tile.row][tile.column].status === 'undiscovered') {
           this.tiles[tile.row][tile.column].status = 'discovered'
@@ -412,22 +424,22 @@ var vm = new Vue({
       
       if (status === 'undiscovered') {
         this.cursorTrail = app.cursorStates.denied
-        return;
       }
-      if (type === 'ruin') {
+      else if (type === 'ruin') {
         this.cursorTrail = app.cursorStates.build
-        return
       }
-      if (type === 'village') {
-        this.cursorTrail = app.cursorStates.fight
-        return
+      else if (faction === 'blue' && type === 'plain') {
+        this.cursorTrail = app.cursorStates.build
       }
-      if (faction === 'neutral') {
+      else if (faction === 'neutral') {
         this.cursorTrail = app.cursorStates.annex
-        return
       }
-      
-      this.cursorTrail = app.cursorStates.reign
+      else if (faction !== 'neutral' && faction !== 'blue') {
+        this.cursorTrail = app.cursorStates.fight
+      }
+      else {
+        this.cursorTrail = app.cursorStates.reign  
+      }
     },
     handleTileMouseLeave: function(row, column) {
       this.cursorTrail = false

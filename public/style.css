@@ -167,7 +167,7 @@ main {
 }
 
 .hex meter {
-  width: calc(100% - 2.5rem);
+  width: calc(100% - 2.1rem);
   display: block;
   height: 2rem;
 }
@@ -186,15 +186,27 @@ meter::-webkit-meter-optimum-value {
   background: #4fff3c;
 }
 
-.hex meter:before {
-  float: right;
-  font-size: 1.5rem;
-  margin-right: -2.2rem;
-  margin-top: .1rem;
+.hex .tile-meter__wrapper {
+  position: relative;
 }
 
-.meter_type_hp meter:before {
+.hex .tile-meter__wrapper:after {
+  position: absolute;
+  font-size: 1.5rem;
+  right: 0;
+  top: 0;
+}
+
+.meter_type_strength:after {
+  content: '🚩';
+}
+
+.hex_ruin .meter_type_strength:after {
   content: '🛠️';
+}
+
+.hex_faction_opponent .meter_type_strength:after {
+  content: '⚔️';
 }
 
 .player-stats {
