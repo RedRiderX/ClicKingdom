@@ -21,18 +21,35 @@ var app = {
     }
   },
   startingTiles: [
-    [{}, {}, {}, {}, {}],
-    [{}, {}, {}, {}],
-    [{}, {}, {type: 'ruin', status: 'startTile', initialHp: 0}, {}, {}],
+    [
+      {type: 'castle', faction: 'red', status: 'undiscovered', initialStrength: 100, maxStrength: 100},
+      {type: 'plain', faction: 'red', status: 'undiscovered', initialStrength: 50, maxStrength: 50},
+      {}, {}, {}
+    ],
+    [
+      {type: 'plain', faction: 'red', status: 'undiscovered', initialStrength: 50, maxStrength: 50},
+      {}, {}, {}
+    ],
+    [{}, {}, {type: 'ruin', status: 'startTile'}, {}, {}],
     [{}, {}, {}, {}],
     [{}, {}, {}, {}, {}],
   ],
+  startingStats: {
+    red: {
+      attackPower: 10,
+      // defaultTileStrength: 50
+    },
+    blue: {
+      attackPower: 0,
+      clickPower: 1
+    }
+  },
   defaultTileProps: {
     type: 'plain',
     faction: 'neutral',
     status: 'undiscovered',
-    initialHp: 12,
-    maxHp: 12
+    initialStrength: 12,
+    maxStrength: 12
   },
   makeStartingTiles: function() {
     // add default props to list of tiles
@@ -71,10 +88,11 @@ var app = {
     farm: {
       popCost: 1
     },
-    castle: {
-      popCost: 2
-    }
-  }
+    // castle: {
+    //   popCost: 2
+    // }
+  },
+  tickSpeed: 1000
 }
 
 // silly cursor trail that amuses me
@@ -92,14 +110,14 @@ Vue.component('tile', {
     row: Number,
     column: Number,
     status: String,
-    initialHp: Number,
-    maxHp: Number,
+    initialStrength: Number,
+    maxStrength: Number,
     active: Boolean
   },
   
   data: function() {
     return {
-      hp: this.initialHp
+      strength: this.initialStrength
     }
   },
   
@@ -131,16 +149,16 @@ Vue.component('tile', {
     activeMeters: function() {
       let activeMeters = {}
       
-      if (this.hp < this.maxHp &&
-          this.hp > 0
+      if (this.strength < this.maxStrength &&
+          this.strength > 0
       ) {
-        activeMeters.hp = {
+        activeMeters.strength = {
           min: 0,
-          max: this.maxHp, 
-          low: this.maxHp * .25,
-          high: this.maxHp * .75,
-          optimum: this.maxHp,
-          value: this.hp
+          max: this.maxStrength, 
+          low: this.maxStrength * .25,
+          high: this.maxStrength * .75,
+          optimum: this.maxStrength,
+          value: this.strength
         } 
       }
       
@@ -152,15 +170,25 @@ Vue.component('tile', {
     click: function(event) {
       // start out with the basics
       if (this.type == 'ruin') {
-        // raise hp and if high enough trigger state change?
-        this.raiseHp()
+        // lower strength and until 0 then trigger state change?
+        this.lowerStrength()
+      }
+      // lower strength until 0 then trigger state change menu?
+      if (this.type == 'plain' && this.faction == 'neutral') {
+        this.lowerStrength()
+      }
+      if (this.type == 'plain' && this.faction == 'blue') {
+        this.triggerMenu('build');
+      }
+      if (this.faction != 'blue' && this.faction != 'neutral') {
+        this.triggerMenu('war');
       }
       return false
     },
-    lowerHp: function() {
-      this.hp--
-      if (this.hp <= 0) {
-        this.updateState('')
+    lowerStrength: function() {
+      this.strength--
+      if (this.strength <= 0) {
+        this.strength = 0
         this.$emit('update-state', {
           eventType: 'healthEmpty',
           row: this.row,
@@ -168,16 +196,23 @@ Vue.component('tile', {
         })
       }
     },
-    raiseHp: function() {
-      this.hp++
-      if (this.hp >= this.maxHp) {
-        this.hp = this.maxHp
+    raiseStrength: function() {
+      this.strength++
+      if (this.strength >= this.maxStrength) {
+        this.strength = this.maxStrength
         this.$emit('update-state', {
           eventType: 'healthFull',
           row: this.row,
           column: this.column
         })
       }
+    },
+    triggerMenu: function(type) {
+      this.$emit('launch-menu', {
+        menuType: type,
+        row: this.row,
+        column: this.column
+      })
     }
   }
 })
@@ -231,8 +266,9 @@ var vm = new Vue({
       popCost: app.startingCosts.farm.popCost
     },
     castle: {
-      popCost: app.startingCosts.castle.popCost
-    }
+      // popCost: app.startingCosts.castle.popCost
+    },
+    tick: null,
   },
   
   computed: {
@@ -305,15 +341,20 @@ var vm = new Vue({
   methods: {
     handleTileStateChange: function(event) {
       console.log(event)
+      let tileInQuestion = this.tiles[event.row][event.column]
       switch (event.eventType) {
-        case 'healthFull':
-          let tileInQuestion = this.tiles[event.row][event.column]
-          
+        case 'healthEmpty':          
           if (tileInQuestion.type === 'ruin') {
             this.upgradeTile(event.row, event.column, 'blue', 'castle')
             this.cursorTrail = app.cursorStates.reign
             this.triggerFanfare()
           }
+          else if (tileInQuestion.type === 'plain') {
+            this.upgradeTile(event.row, event.column, 'blue', 'plain')
+            this.cursorTrail = app.cursorStates.build
+          }
+          break;
+        case 'healthFull':
           break
       }
     },
@@ -408,7 +449,20 @@ var vm = new Vue({
         row: null,
         column: null
       }
+    },
+    createTick: function() {
+      this.tick = setInterval(this.doTick, app.tickSpeed)
+    },
+    destroyTick: function() {
+      this.tick = clearInterval(this.tick) 
+    },
+    doTick: function() {
+      // TODO: Something
+      console.log('tick')
     }
   },
   
+  mounted: function() {
+    this.createTick()
+  }
 })
